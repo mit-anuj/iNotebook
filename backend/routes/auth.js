@@ -7,7 +7,7 @@ const { validationResult, body } = require('express-validator');
 const jwt = require('jsonwebtoken');
 
 //! this is the jwt key that we will use to generate the jwt token.
-const JWT_KEY='authKey@12#3'
+const JWT_KEY = 'authKey@12#3'
 
 router.post('/createUser', [
     // writing the validations
@@ -27,30 +27,29 @@ router.post('/createUser', [
         //! checking if this email already exists in the database or not.
         const user = await User.findOne({ email: req.body.email })
         if (user) {
-            res.status(400).json({ 'error': ' user with email already exists' })
+            return res.status(400).json({ 'error': ' user with email already exists' })
         }
-        else {  
-            // this is the data that we are passing in the jwt method.
-            const data={
-                user:{
-                    id: req.body.id
-                }
-            }
+        else {
+            
             //! this will create a salt for me 
-            const genSalt= await bcrypt.genSalt(10);
+            const genSalt = await bcrypt.genSalt(10);
             //! this will append the password that is coming form the user and the salt and then it will generate a hash code of it
             const secPass = await bcrypt.hash(req.body.password, genSalt)
             await User.create({
                 name: req.body.name,
-                // password: req.body.password,
                 //! now we are storing the hash code into the database
                 password: secPass,
                 email: req.body.email,
             })
-            // res.status(200).json({ 'status': 'ok' })
+            // this is the data that we are passing in the jwt method.
+            const data = {
+                user: {
+                    id: req.body.id
+                }
+            }
             //! this will create a token for us 
             const authenticationToken = jwt.sign(data, JWT_KEY)
-            res.send(authenticationToken).status(200)
+            res.json(authenticationToken).status(200)
         }
     } catch (error) {
         console.error(error.message)
@@ -58,5 +57,45 @@ router.post('/createUser', [
     }
 }
 )
+
+router.post('/login', [
+    // writing the validations
+    body('email', 'Email length should be 10 to 30 characters')
+        .isEmail().isLength({ min: 10, max: 30 }),
+    body('password', 'Password must not be empty')
+        .exists()
+], async (req, res) => {
+    const errors = await validationResult(req)
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() })
+    }
+
+    const { email, password } = req.body;
+    try {
+        //! checking if the the given email exists in the database or not, if yes then storing the object in user variable. 
+        const user = await User.findOne({email})
+        if (!user) {
+            return res.status(400).json({ errors: 'Invalid credentials ' })
+        }
+        //* checking if the password given by the user is matching with the password that is stored in the database with the given email.
+        const isPassword = await bcrypt.compare(password, user.password)
+        if (!isPassword) {
+            return res.status(400).json({ errors: 'Invalid credentials ' })
+        }
+        // this is the data that we are passing in the jwt method.
+        const data = {
+            user: {
+                id: req.body.id
+            }
+        }
+        //! this will create a token for us 
+        const authenticationToken = jwt.sign(data, JWT_KEY)
+        res.status(200).json(authenticationToken)
+    } catch (error) {
+        console.error(error.message)
+        res.status(500).send('something went wrong')
+    }
+
+})
 
 module.exports = router;
