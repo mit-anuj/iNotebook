@@ -20,5 +20,7 @@ const userSchema = new mongoose.Schema({
     }
 
 })
-
-module.exports = mongoose.model('users',userSchema)
+const users = mongoose.model('users',userSchema)
+//* this will check if the entry is unique or not.
+ users.createIndexes();
+module.exports = users
