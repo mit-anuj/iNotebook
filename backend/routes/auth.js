@@ -1,9 +1,13 @@
+const bcrypt = require('bcrypt');
+// import * as bcrypt from 'bcryptjs'
 const express = require('express');
 const router = express.Router()
 const User = require('../models/User')
-const { validationResult, body }
-    = require('express-validator');
+const { validationResult, body } = require('express-validator');
+const jwt = require('jsonwebtoken');
 
+//! this is the jwt key that we will use to generate the jwt token.
+const JWT_KEY='authKey@12#3'
 
 router.post('/createUser', [
     // writing the validations
@@ -25,23 +29,33 @@ router.post('/createUser', [
         if (user) {
             res.status(400).json({ 'error': ' user with email already exists' })
         }
-        else {
+        else {  
+            // this is the data that we are passing in the jwt method.
+            const data={
+                user:{
+                    id: req.body.id
+                }
+            }
+            //! this will create a salt for me 
+            const genSalt= await bcrypt.genSalt(10);
+            //! this will append the password that is coming form the user and the salt and then it will generate a hash code of it
+            const secPass = await bcrypt.hash(req.body.password, genSalt)
             await User.create({
                 name: req.body.name,
-                password: req.body.password,
+                // password: req.body.password,
+                //! now we are storing the hash code into the database
+                password: secPass,
                 email: req.body.email,
             })
-            res.status(200).json({ 'status': 'ok' })
+            // res.status(200).json({ 'status': 'ok' })
+            //! this will create a token for us 
+            const authenticationToken = jwt.sign(data, JWT_KEY)
+            res.send(authenticationToken).status(200)
         }
     } catch (error) {
         console.error(error.message)
         res.send('something went wrong').status(500)
     }
-
-
-    // this will send the response to the page in the json format.
-    // .then(user => res.json(user))
-    // .catch(err => console.log(err))
 }
 )
 

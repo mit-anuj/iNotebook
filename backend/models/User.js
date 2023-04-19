@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type : String,
         required: true,
-        unique : true
+        // removed the unique attribute form here beacuse we are checking it in auth.js file.
     },
     password: {
         type : String,

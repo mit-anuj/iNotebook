@@ -1,5 +1,5 @@
 const mongoose  = require('mongoose');
-const dbURL = 'mongodb://127.0.0.1:27017/iNotebook'
+const dbURL = 'mongodb://127.0.0.1:27017/inotebook'
 
 const connectToDB = async ()=>{
     try{
