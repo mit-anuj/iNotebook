@@ -5,42 +5,43 @@ const { validationResult, body }
     = require('express-validator');
 
 
-router.post('/', [
+router.post('/createUser', [
+    // writing the validations
     body('email', 'Email length should be 10 to 30 characters')
         .isEmail().isLength({ min: 10, max: 30 }),
     body('name', 'Name length should be greater than 5')
         .isLength({ min: 5 }),
     body('password', 'Password length should be greater than 8')
         .isLength({ min: 8 })
-], (req, res) => {
-    // const errors = validationResult(req);
-
-    // // If some error occurs, then this
-    // // block of code will run
-    // if (!errors.isEmpty()) {
-    //     res.json(errors)
-    // }
-
-    // // If no error occurs, then this
-    // // block of code will run
-    // else {
-    //     res.send("Successfully validated")
-    //     // ! here we are basically creating an instance of User and passing the data from request to create an object in the database.
-    //     const user = new User(req.body)
-    //     //* we are saving the data so that it will reflect the changes in the database.
-    //     user.save()
-
-    const errors = validationResult(req)
+], async (req, res) => {
+    // checking if the data coming from the user is valid or not , if not send the bad request.
+    const errors = await validationResult(req)
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() })
     }
+    try {
+        //! checking if this email already exists in the database or not.
+        const user = await User.findOne({ email: req.body.email })
+        if (user) {
+            res.status(400).json({ 'error': ' user with email already exists' })
+        }
+        else {
+            await User.create({
+                name: req.body.name,
+                password: req.body.password,
+                email: req.body.email,
+            })
+            res.status(200).json({ 'status': 'ok' })
+        }
+    } catch (error) {
+        console.error(error.message)
+        res.send('something went wrong').status(500)
+    }
 
-    User.create({
-        name: req.body.name,
-        password: req.body.password,
-        email: req.body.email,
-    }).then(user => res.json(user))
-    .catch(err => console.log(err))
+
+    // this will send the response to the page in the json format.
+    // .then(user => res.json(user))
+    // .catch(err => console.log(err))
 }
 )
 
