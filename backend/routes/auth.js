@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
-// import * as bcrypt from 'bcryptjs'
 const express = require('express');
 const router = express.Router()
 const User = require('../models/User')
 const { validationResult, body } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const fetchUser = require('../middleware/getuser');
 
 //! this is the jwt key that we will use to generate the jwt token.
 const JWT_KEY = 'authKey@12#3'
@@ -44,7 +44,7 @@ router.post('/createUser', [
             // this is the data that we are passing in the jwt method.
             const data = {
                 user: {
-                    id: req.body.id
+                    id: user.id
                 }
             }
             //! this will create a token for us 
@@ -85,7 +85,7 @@ router.post('/login', [
         // this is the data that we are passing in the jwt method.
         const data = {
             user: {
-                id: req.body.id
+                id: user.id
             }
         }
         //! this will create a token for us 
@@ -96,6 +96,16 @@ router.post('/login', [
         res.status(500).send('something went wrong')
     }
 
+})
+
+router.post('/getuser', fetchUser, async (req, res) => {
+   try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).select('-password')
+    res.json(user)
+   } catch (error) {
+    
+   }
 })
 
 module.exports = router;
