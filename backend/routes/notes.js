@@ -93,4 +93,29 @@ router.patch('/updatenote/:id', fetchUser, async (req, res) => {
     }
 })
 
+// Route 4: (DELETE) Delete an existing note  Login required 
+router.delete('/deletenote/:id', fetchUser, async (req, res) => {
+    try {
+        // here we are checking whether that particular note exists in the database or not.
+        const note = await Notes.findById(req.params.id)
+        if(!note){
+            return res.status(404).json({error: 'note not found'})
+        }
+        //! checking whether the logged in user is allowed to update that particular note or not.
+        if(note.user.toString() !== req.user.id){
+            return res.send('not allowed')
+        }
+        //! if the user is verified then we are updating the note .
+        const updatenote = await Notes.findByIdAndDelete(req.params.id)
+
+        res.status(200).json({'success': 'note is successfully deleted',updatenote})
+    } catch (error) {
+        console.error(error.message)
+        res.status(500).json({
+            error: 'internal server error'
+        })
+
+    }
+})
+
 module.exports = router;
