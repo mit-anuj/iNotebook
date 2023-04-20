@@ -9,7 +9,7 @@ connectToDB();
 app.use(express.urlencoded({ extended:true}))
 app.use(express.json())
 
-app.use('/api/users',require('./routes/users'))
+app.use('/api/notes',require('./routes/notes.js'))
 app.use('/api/auth', require('./routes/auth'))
 
 

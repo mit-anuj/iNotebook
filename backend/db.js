@@ -9,13 +9,6 @@ const connectToDB = async ()=>{
     catch(err){
         console.log(`error connecting to database`)
     }
-    
-
-    // .then(()=>{
-    //     console.log("connected to database")
-    // })
-    // .catch(err=>{   
-    //     console.log("error connecting")})
 }
 
 module.exports = connectToDB;

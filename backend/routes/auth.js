@@ -30,7 +30,7 @@ router.post('/createUser', [
             return res.status(400).json({ 'error': ' user with email already exists' })
         }
         else {
-            
+
             //! this will create a salt for me 
             const genSalt = await bcrypt.genSalt(10);
             //! this will append the password that is coming form the user and the salt and then it will generate a hash code of it
@@ -73,7 +73,7 @@ router.post('/login', [
     const { email, password } = req.body;
     try {
         //! checking if the the given email exists in the database or not, if yes then storing the object in user variable. 
-        const user = await User.findOne({email})
+        const user = await User.findOne({ email })
         if (!user) {
             return res.status(400).json({ errors: 'Invalid credentials ' })
         }
@@ -99,13 +99,14 @@ router.post('/login', [
 })
 
 router.post('/getuser', fetchUser, async (req, res) => {
-   try {
-    const userId = req.user.id;
-    const user = await User.findById(userId).select('-password')
-    res.json(user)
-   } catch (error) {
-    
-   }
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId).select('-password')
+        res.json(user)
+    } catch (error) {
+        console.error(error.message)
+        res.status(500).send('something went wrong')
+    }
 })
 
 module.exports = router;
