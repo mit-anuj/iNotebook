@@ -8,7 +8,8 @@ const AddNote = () => {
 
     const handleOnClick = (e)=>{
         e.preventDefault()
-        addNote(note.title, note.description)
+        addNote(note.title, note.description,note.tag)
+        setNote({title: '', description: '', tag: ''})
     }
     
     const handleOnChange = (e)=>{
@@ -25,21 +26,18 @@ const AddNote = () => {
                 <form className='my-3'>
                     <div className="mb-3">
                         <label htmlFor="title" className="form-label">Title</label>
-                        <input type="text" className="form-control" id="title" aria-describedby="emailHelp" name='title'onChange={handleOnChange}/>
+                        <input type="text" className="form-control" id="title" aria-describedby="emailHelp" name='title'onChange={handleOnChange} value={note.title}/>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="description" className="form-label">Description</label>
-                        <textarea type="text" className="form-control" id="description" name='description' onChange={handleOnChange}/>
+                        <textarea type="text" className="form-control" id="description" name='description' onChange={handleOnChange}value={note.description}/>
                     </div>
                     <div className="mb-3">
                         <label htmlFor="tag" className="form-label">Tag</label>
-                        <input type="text" className="form-control" id="tag" name='tag' onChange={handleOnChange}/>
+                        <input type="text" className="form-control" id="tag" name='tag' onChange={handleOnChange} value={note.tag}/>
                     </div>
-                    <div className="mb-3 form-check">
-                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-                        <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-                    </div>
-                    <button type="submit" className="btn btn-primary" onClick={handleOnClick}>Submit</button>
+                    
+                    <button disabled={note.description.length<8 || note.title.length<5} type="submit" className="btn btn-primary" onClick={handleOnClick}>Submit</button>
                 </form>
             </div>
         </div>
