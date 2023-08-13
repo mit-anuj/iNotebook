@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useRef ,useState} from 'react'
 import NoteContext from '../Context/Notes/noteContext'
 import Notesitem from './Notesitem';
+import { useNavigate } from 'react-router-dom';
 
-const Notes = () => {
+const Notes = (props) => {
     // fetching the notes form the noteState.js file using useContext.
     const context = useContext(NoteContext)
+    const navigate = useNavigate();
     const { notes, getAllNotes,editNote} = context;
    const [note,setNote]= useState({id: "", etitle: '', edescription: '', etag: ''})
    const refClose = useRef(null);
@@ -12,11 +14,17 @@ const Notes = () => {
    
     // we are using useEffect here so that we can call getAllNotes function without calling it manually.
     useEffect(() => {
-        getAllNotes()
+        if(localStorage.getItem('auth-token')){
+            console.log("working")
+            getAllNotes()
+        }else{
+            console.log("this is not working")
+            navigate('/login');
+        }
+        //eslint-disable-next-line
     }, [])
 
     const updateNote = (note) => {
-
         ref.current.click()
         setNote({id: note._id,etitle: note.title, edescription: note.description, etag: note.tag})
     }
@@ -26,6 +34,8 @@ const Notes = () => {
         editNote(note.id,note.etitle,note.edescription,note.etag)
         e.preventDefault();
         refClose.current.click();
+        props.showAlert('note updated','success');
+
     }
     
     const handleOnChange = (e)=>{
@@ -76,7 +86,7 @@ const Notes = () => {
                         {notes.length === 0 && "No notes to display"}
                     </div>
                     {notes && notes.map((note) => {
-                        return <Notesitem key={note._id} updateNote={updateNote} note={note} />
+                        return <Notesitem key={note._id} updateNote={updateNote} showAlert ={props.showAlert} note={note} />
                     })}
                 </div>
             </div>

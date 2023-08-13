@@ -11,12 +11,13 @@ const NoteState = (props) => {
          const requestOptions = {
             method: 'GET',
             headers: {
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ0MDM1ZDE2ZDg1YjAxM2IwY2EwOWViIn0sImlhdCI6MTY4MjAxNjU5NH0.s-s5qiItP76T10cWvlx04UcYAS4wjy06K2O0SnZJ56M",
+                "auth-token": localStorage.getItem('auth-token'),
                 "content-type": "application/json"
             },
         };
         const response = await fetch(`${host}/api/notes/fetchallnotes`, requestOptions);
         let initialNotes = await response.json();
+        // console.log("this is working")
         //! overwrite the value of notes with the new value we got form the api.
         setNotes(initialNotes)
     }
@@ -27,7 +28,7 @@ const NoteState = (props) => {
         const requestOptions = {
             method: 'POST',
             headers: {
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ0MDM1ZDE2ZDg1YjAxM2IwY2EwOWViIn0sImlhdCI6MTY4MjAxNjU5NH0.s-s5qiItP76T10cWvlx04UcYAS4wjy06K2O0SnZJ56M",
+                "auth-token": localStorage.getItem('auth-token'),
                 "content-type": "application/json"
             },
             body: JSON.stringify({title, description, tag})
@@ -46,13 +47,13 @@ const NoteState = (props) => {
         const requestOptions = {
             method: 'DELETE',
             headers: {
-                "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ0MDM1ZDE2ZDg1YjAxM2IwY2EwOWViIn0sImlhdCI6MTY4MjAxNjU5NH0.s-s5qiItP76T10cWvlx04UcYAS4wjy06K2O0SnZJ56M",
+                "auth-token": localStorage.getItem('auth-token'),
                 "content-type": "application/json"
             },
         };
         const response = await fetch(`${host}/api/notes/deletenote/${id}`, requestOptions);
+        //eslint-disable-next-line
         const data = await response.json();
-        console.log(data)
 
         // through this we can delete the note from the webpage.
         // using filter we can find the note with the given id and filter function will return a new array withour that note.
@@ -67,13 +68,16 @@ const NoteState = (props) => {
         // API Call
         const requestOptions = {
             method: 'PATCH',
-            headers: {"content-type": "application/json",'auth-token':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjQ0MDM1ZDE2ZDg1YjAxM2IwY2EwOWViIn0sImlhdCI6MTY4MjAxNjU5NH0.s-s5qiItP76T10cWvlx04UcYAS4wjy06K2O0SnZJ56M'
+            headers: {
+                "content-type": "application/json",
+                'auth-token':localStorage.getItem('auth-token')
         },
             body: JSON.stringify({ title, description, tag })
         };
         const response = await fetch(`${host}/api/notes/updatenote/${id}`, requestOptions);
+        //eslint-disable-next-line
         const data = await response.json();
-        console.log(data)
+        // console.log(data)
         //
         for (let index = 0; index < notes.length; index++) {
             const element = notes[index];
