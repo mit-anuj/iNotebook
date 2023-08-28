@@ -36,10 +36,11 @@ const Signup = (props) => {
   }
   return (
     <div className='container'>
+      <h2 className='mt-1'>Signup to continue with iNotebook</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">Full Name</label>
-          <input type="text" className="form-control" name="fullName" id="fullName" onChange={onChange} min={5}required/>
+          <input type="text" className="form-control" name="fullName" id="fullName" onChange={onChange} minLength={3}required/>
         </div>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
@@ -47,11 +48,11 @@ const Signup = (props) => {
         </div>
         <div className="mb-3">
           <label htmlFor="password" className="form-label">Password</label>
-          <input type="password" className="form-control" name='password' id="password"onChange={onChange} required/>
+          <input type="password" className="form-control" name='password' id="password"onChange={onChange} minLength={5}required/>
         </div>
         <div className="mb-3">
           <label htmlFor="cpassword" className="form-label">Confirm Password</label>
-          <input type="password" className="form-control" name='cpassword' id="cpassword"onChange={onChange} required/>
+          <input type="password" className="form-control" name='cpassword' id="cpassword"onChange={onChange} minLength={5}required/>
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>

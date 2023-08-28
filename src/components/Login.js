@@ -21,7 +21,6 @@ const Login = (props) => {
         const note = await response.json();
         if(note.success){
             localStorage.setItem('auth-token',note.authenticationToken)
-            console.log(note.authenticationToken);
             // ! this will check if the credentials are valid or not. If yes,then it will redirect.
             props.showAlert("Logged in successfully","success");
             navigate("/");
@@ -32,6 +31,7 @@ const Login = (props) => {
     }
     return (
         <div className='container'>
+            <h2 className='my-2'>Login to Continue with iNotebook</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="email" className="form-label">Email address</label>
@@ -40,7 +40,7 @@ const Login = (props) => {
                 </div>
                 <div className="mb-3">
                     <label htmlFor="password" className="form-label">Password</label>
-                    <input type="password" className="form-control" name='password' value={credentials.password} onChange={onChange} id="password" />
+                    <input type="password" className="form-control" name='password' value={credentials.password} onChange={onChange} id="password" minLength={5}/>
                 </div>
 
                 <button type="submit" className="btn btn-primary" >Submit</button>

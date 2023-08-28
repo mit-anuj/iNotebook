@@ -15,7 +15,6 @@ const Notes = (props) => {
     // we are using useEffect here so that we can call getAllNotes function without calling it manually.
     useEffect(() => {
         if(localStorage.getItem('auth-token')){
-            console.log("working")
             getAllNotes()
         }else{
             console.log("this is not working")
